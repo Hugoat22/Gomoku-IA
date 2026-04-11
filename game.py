@@ -23,11 +23,12 @@ class Game:
             if not (0 <= coord[0] < 19 and 0 <= coord[1] < 19):
                 return
         else:
-             ia = self.joueurs[self.tour_joueur-1]
-             coord = minimax_alpha_beta(self.Plateau[PAD:19+PAD,PAD:19+PAD],ia.Profondeur,ia.taux())
-        if self.Plateau[coord[1]+PAD][coord[0]+PAD] == 0:
-            self.Plateau[coord[1]+PAD][coord[0]+PAD] = self.tour_joueur
-            if self.check(coord[0]+PAD,coord[1]+PAD):
+            ia = self.joueurs[self.tour_joueur-1]
+            coord = minimax_alpha_beta(self.Plateau[PAD:19+PAD,PAD:19+PAD],ia.Profondeur,ia.taux())
+        y, x = coord
+        if self.Plateau[y+PAD][x+PAD] == 0:
+            self.Plateau[y+PAD][x+PAD] = self.tour_joueur
+            if self.check(x+PAD,y+PAD):
                 self.gagnant = self.tour_joueur
                 return
             self.tour_joueur = 1 if self.tour_joueur == 2 else 2

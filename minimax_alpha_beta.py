@@ -84,7 +84,7 @@ def minimax_alpha_beta(plateau,profondeur=3,taux=[1,10]):
         plt[yy,xx] = 0
 
         if (joueur == 2 and score == float("inf")) or (joueur == 1 and score == -float("inf")):
-            return [xx,yy]
+            return [yy,xx]
 
         Eval_pre = Eval
 
@@ -96,7 +96,7 @@ def minimax_alpha_beta(plateau,profondeur=3,taux=[1,10]):
             beta = min(beta, Eval)
 
         if Eval_pre != Eval:
-            coord = [xx,yy]
+            coord = [yy,xx]
 
         if beta <= alpha:
             break

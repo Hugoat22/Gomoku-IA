@@ -28,17 +28,17 @@ def draw_board(partie):
     for x in range(TAILLE):
         pygame.draw.line(screen,NOIR,(BORDURE+DIST*x,BORDURE),(BORDURE+DIST*x,HAUTEUR - BORDURE),2)
 
-    for x,y in np.argwhere((partie.Plateau == 1) | (partie.Plateau == 2)):
-        pygame.draw.circle(screen,NOIR,(BORDURE + (y - PAD) * DIST  ,BORDURE + (x - PAD) * DIST ),DIST/2)
-    for x,y in np.argwhere(partie.Plateau == 2):
-        pygame.draw.circle(screen,BLANC,(BORDURE + (y - PAD) * DIST  ,BORDURE + (x - PAD) * DIST ),DIST/2)
+    for y,x in np.argwhere(partie.Plateau == 1):
+        pygame.draw.circle(screen,NOIR,(BORDURE + (x - PAD) * DIST  ,BORDURE + (y - PAD) * DIST ),DIST/2)
+    for y,x in np.argwhere(partie.Plateau == 2):
+        pygame.draw.circle(screen,BLANC,(BORDURE + (x - PAD) * DIST  ,BORDURE + (y - PAD) * DIST ),DIST/2)
 
 
 def start():
 
-    ia_1 = IA(1,100)
+    ia_1 = IA(1,1,2)
 
-    ia_2 = IA(1,80)
+    ia_2 = IA(1,1,2)
 
     joueurs = [ia_1,ia_2]
 
@@ -54,7 +54,7 @@ def start():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if partie.joueurs[partie.tour_joueur-1] is None:
                     x,y = pygame.mouse.get_pos()
-                    coord = [int(round((x - BORDURE) / DIST)), int(round((y - BORDURE) / DIST))]
+                    coord = [int(round((y - BORDURE) / DIST)), int(round((x - BORDURE) / DIST))]
                     partie.ajoute_jeton(coord)
                     
         draw_board(partie)
@@ -64,6 +64,7 @@ def start():
             partie.ajoute_jeton(None)
 
     while True:
+        print(f"Le gagnant est le joueur {partie.gagnant}")
         draw_board(partie)
         pygame.display.update()
 

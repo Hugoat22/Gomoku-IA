@@ -6,7 +6,7 @@ ORIGINE_PROFONDEUR = 0
 def filtre_map(plt,profondeur):
     global ORIGINE_PROFONDEUR
     ORIGINE_PROFONDEUR = profondeur
-    masque = np.full(plt.shape, -1, dtype=np.int64)
+    masque = np.full(plt.shape, -2, dtype=np.int64)
 
     for (yy,xx) in np.argwhere((plt == 1) | (plt == 2)):
         borne_y = [
@@ -73,11 +73,11 @@ def trie_score(plt, joueur, coups):
 def retirer_coups(plt, coord, plateau):
     point = 0
     plateau[coord[0],coord[1]] = 2
-    if count_pos(plateau,coord[0],coord[1],2,True) >= 10:
+    if count_pos(plateau,coord[0],coord[1],2,utile=True) >= 10:
         point += 1
 
     plateau[coord[0],coord[1]] = 1
-    if count_pos(plateau,coord[0],coord[1],1,True) >= 10:
+    if count_pos(plateau,coord[0],coord[1],1,utile=True) >= 10:
         point += 1
 
     if point == 0:
