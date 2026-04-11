@@ -59,9 +59,9 @@ def trie_score(plt, joueur, coups):
         if plt[coup[0], coup[1]] != 0:
             continue
         plt[coup[0], coup[1]] = joueur
-        score_joueur = count_pos(plt,coup[0], coup[1], joueur)
+        score_joueur = count_pos(plt,coup[0], coup[1], joueur,local=True)
         plt[coup[0], coup[1]] = adv
-        score_adv = count_pos(plt,coup[0], coup[1], adv)
+        score_adv = count_pos(plt,coup[0], coup[1], adv, local=True)
         plt[coup[0], coup[1]] = 0
         score_general = score_joueur - score_adv
         if abs(score_general) == float("inf"):

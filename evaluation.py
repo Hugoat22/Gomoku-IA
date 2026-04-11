@@ -69,13 +69,25 @@ def tout_direction(plt,y1,x1,joueur,dir,utile):
             score += valeur_score(avant, apres, taille, utile)
     return score
 
-def count_pos(plt,y1,x1,joueur,utile=False):
+def count_pos(plt,y1,x1,joueur,utile=False,local=False):
     score = 0
 
     for dir in range(4):
-        score += tout_direction(plt,y1,x1,joueur,dir,utile)
+        if local:
+            y_debut = y1
+            x_debut = x1
+            y_dir,x_dir = DIRECTION[dir]
+            while 0 <= y_debut - y_dir < plt.shape[0] and 0 <= x_debut - x_dir < plt.shape[1]:
+                if plt[y_debut - y_dir,x_debut - x_dir] == joueur:
+                    y_debut -= y_dir
+                    x_debut -= x_dir
+                else:
+                    break
+            score += tout_direction(plt,y_debut,x_debut,joueur,dir,utile)
+        else:
+            score += tout_direction(plt,y1,x1,joueur,dir,utile)
         if score == float("inf"):
-            return score
+            return float("inf")
 
     if np.sum(plt[max(0,y1-1):min(plt.shape[0],y1+2),max(0,x1-1):min(plt.shape[1],x1+2)] == joueur) == 1 and score == 0:
         score += 1

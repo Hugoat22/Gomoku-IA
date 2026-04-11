@@ -16,6 +16,9 @@ class Game:
         self.gagnant = None
     
     def ajoute_jeton(self,coord : list[int,int] | None) -> None:
+        if len(np.argwhere(self.Plateau[PAD:19+PAD,PAD:19+PAD] == 0)) == 0:
+            self.gagnant = 3
+            return
         if coord is not None:
             if not (0 <= coord[0] < 19 and 0 <= coord[1] < 19):
                 return
