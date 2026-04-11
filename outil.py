@@ -5,8 +5,7 @@ ORIGINE_PROFONDEUR = 0
 
 def filtre_map(plt,profondeur):
     global ORIGINE_PROFONDEUR
-    if ORIGINE_PROFONDEUR == 0:
-        ORIGINE_PROFONDEUR = profondeur
+    ORIGINE_PROFONDEUR = profondeur
     masque = np.full(plt.shape, -1, dtype=np.int64)
 
     for (yy,xx) in np.argwhere((plt == 1) | (plt == 2)):
@@ -43,7 +42,6 @@ def trier_coups(plt,joueur,plateau=None):
     global ORIGINE_PROFONDEUR
     coups = []
     visite = set()
-
     for i in range(1,ORIGINE_PROFONDEUR+1):
         couche = recup_couche(plt, i)
         for coord in np.argwhere(couche == 0):
@@ -57,7 +55,6 @@ def trier_coups(plt,joueur,plateau=None):
 def trie_score(plt, joueur, coups):
     adv = 1 if joueur == 2 else 2
     scores = []
-
     for coup in coups:
         if plt[coup[0], coup[1]] != 0:
             continue
@@ -67,7 +64,7 @@ def trie_score(plt, joueur, coups):
         score_adv = count_pos(plt,coup[0], coup[1], adv)
         plt[coup[0], coup[1]] = 0
         score_general = score_joueur - score_adv
-        if score_general == float("inf") or score_general == -float("inf"):
+        if abs(score_general) == float("inf"):
             return [coup]
         scores.append((coup, score_general))
     scores.sort(key=lambda x: x[1], reverse=True)
