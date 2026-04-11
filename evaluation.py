@@ -27,132 +27,55 @@ def valeur_score(avant, apres, taille,utile):
                 return 10
     return 0
 
-def horizontal(plt,y1,x1,joueur,utile):
-    score = 0
-    if (x1 == 0 or plt[y1,max(0,x1-1)] != joueur):
-        taille = 0
-        for val in plt[y1,x1:min(plt.shape[1],x1+5)]:
-            if val != joueur:
-                break
-            taille += 1
-        if taille == 5:
-            return float("inf")
-        if (taille >= 2 and utile == False) or utile:
-            avant = 0
-            for val in plt[y1,max(0,x1-(5-taille)):max(0,x1)][::-1]:
-                if val != joueur and val != 0:
-                    break
-                avant += 1
-            apres = 0
-            for val in plt[y1,min(plt.shape[1],x1+taille):min(plt.shape[1],x1+5)]:
-                if val != joueur and val != 0:
-                    break
-                apres += 1
-            if taille + avant + apres >= 5:
-               score += valeur_score(avant, apres, taille, utile)
-    return score
-
-def vertical(plt,y1,x1,joueur,utile):
-    score = 0
-    if (y1 == 0 or plt[max(0,y1-1),x1] != joueur):
-        taille = 0
-        for val in plt[y1:min(plt.shape[0],y1+5),x1]:
-            if val != joueur:
-                break
-            taille += 1
-        if taille == 5:
-            return float("inf")
-        if (taille >= 2 and utile == False) or utile:
-            avant = 0
-            for val in plt[max(0,y1-(5-taille)):max(0,y1),x1][::-1]:
-                if val != joueur and val != 0:
-                    break
-                avant += 1
-            apres = 0
-            for val in plt[min(plt.shape[0],y1+taille):min(plt.shape[0],y1+5),x1]:
-                if val != joueur and val != 0:
-                    break
-                apres += 1
-            if taille + avant + apres >= 5:
-               score += valeur_score(avant, apres, taille, utile)
-    return score
-
-def diagonal(plt,y1,x1,joueur,utile):
-    score = 0
-    if ((x1 == 0 or y1 == 0) or plt[max(0,y1-1),max(0,x1-1)] != joueur):
-        taille = 0
-        for val in np.diag(plt[y1:min(plt.shape[0],y1+5),x1:min(plt.shape[1],x1+5)]):
-            if val != joueur:
-                break
-            taille += 1
-        if taille == 5:
-            return float("inf")
-        if (taille >= 2 and utile == False) or utile:
-            avant = 0
-            for val in np.diag(plt[max(0,y1-(5-taille)):max(0,y1),max(0,x1-(5-taille)):max(0,x1)])[::-1]:
-                if val != joueur and val != 0:
-                    break
-                avant += 1
-            apres = 0
-            for val in np.diag(plt[min(plt.shape[0],y1+taille):min(plt.shape[0],y1+5),min(plt.shape[1],x1+taille):min(plt.shape[1],x1+5)]):
-                if val != joueur and val != 0:
-                    break
-                apres += 1
-            if taille + avant + apres >= 5:
-               score += valeur_score(avant, apres, taille, utile)
-    return score
-
-def diagonal_inverse(plt,y1,x1,joueur,utile):
-    score = 0
-    if ((x1 == 0 or y1 == plt.shape[0]-1) or plt[y1+1,x1-1] != joueur):
-        taille = 0
-        for val in np.diag(np.fliplr(plt[max(0, y1-4):y1+1, x1:min(plt.shape[1], x1+5)])):
-            if val != joueur:
-                break
-            taille += 1
-        if taille == 5:
-            return float("inf")
-        if (taille >= 2 and utile == False) or utile:
-            avant = 0
-            for val in np.diag(np.fliplr(plt[y1+1:min(plt.shape[0],y1+(5-taille)+1),max(0, x1-(5-taille)):x1])):
-                if val != joueur and val != 0:
-                    break
-                avant += 1
-            apres = 0
-            for val in np.diag(np.fliplr(plt[max(0, y1-taille-(5-taille)+1):y1-taille+1, x1+taille:min(plt.shape[1],x1+5)])):
-                if val != joueur and val != 0:
-                    break
-                apres += 1
-            if taille + avant + apres >= 5:
-               score += valeur_score(avant, apres, taille, utile)
-    return score
-
 def tout_direction(plt,y1,x1,joueur,dir,utile):
+    y_dir,x_dir = DIRECTION[dir]
+    L,l = plt.shape
+    x_pred = x1 - x_dir
+    y_pred = y1 - y_dir
+    if 0 <= y_pred < L and 0 <= x_pred < l and plt[y_pred,x_pred] == joueur:
+        return 0
+    x_suc = x1 + x_dir
+    y_suc = y1 + y_dir
     score = 0
-    y_dir,x_dir = DIRECTION[joueur]
-    # en cours de generalisation des scores de direction, pas encore fonctionnel
+    taille = 1
+    while 0 <= x_suc < l and 0 <= y_suc < L:
+        if plt[y_suc,x_suc] != joueur:
+            break
+        taille += 1
+        if taille == 5:
+            return float("inf")
+        x_suc += x_dir
+        y_suc += y_dir
+    if (taille >= 2 and utile == False) or utile:
+        avant = 0
+        x_pred = x1 - x_dir
+        y_pred = y1 - y_dir
+        while taille + avant != 5 and 0 <= x_pred < l and 0 <= y_pred < L:
+            if plt[y_pred,x_pred] != joueur and plt[y_pred,x_pred] != 0:
+                break
+            avant += 1
+            x_pred -= x_dir
+            y_pred -= y_dir
+        apres = 0
+        x_suc = x1 + taille * x_dir
+        y_suc = y1 + taille * y_dir
+        while taille + apres != 5 and 0 <= x_suc < l and 0 <= y_suc < L:
+            if plt[y_suc,x_suc] != joueur and plt[y_suc,x_suc] != 0:
+                break
+            apres += 1
+            x_suc += x_dir
+            y_suc += y_dir
+        if taille + avant + apres >= 5:
+            score += valeur_score(avant, apres, taille, utile)
+    return score
+
 def count_pos(plt,y1,x1,joueur,utile=False):
     score = 0
 
-    score += horizontal(plt,y1,x1,joueur,utile)
-
-    if score == float("inf"):
-        return score
-
-    score += vertical(plt,y1,x1,joueur,utile)
-
-    if score == float("inf"):
-        return score
-
-    score += diagonal(plt,y1,x1,joueur,utile)
-
-    if score == float("inf"):
-        return score
-
-    score += diagonal_inverse(plt,y1,x1,joueur,utile)
-
-    if score == float("inf"):
-        return score
+    for dir in range(4):
+        score += tout_direction(plt,y1,x1,joueur,dir,utile)
+        if score == float("inf"):
+            return score
 
     if np.sum(plt[max(0,y1-1):min(plt.shape[0],y1+2),max(0,x1-1):min(plt.shape[1],x1+2)] == joueur) == 1 and score == 0:
         score += 1
